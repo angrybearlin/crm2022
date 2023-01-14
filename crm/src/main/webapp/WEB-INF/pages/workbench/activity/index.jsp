@@ -121,6 +121,26 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":" + 
 				clearBtn: true // 设置是否显示"清空"按钮，默认是false
 			});
 
+			$("#query-startDate").datetimepicker({
+				language:'zh-CN', // 语言
+				format: 'yyyy-mm-dd', // 日期的格式
+				minView: 'month', // 可以选择的最小视图
+				initData: new Date(), // 初始化显示的日期
+				autoclose: true, // 选择完日期后是否自动关闭日历
+				todayBtn:true, // 设置是否显示"今天"按钮，默认是false
+				clearBtn: true // 设置是否显示"清空"按钮，默认是false
+			});
+
+			$("#query-endDate").datetimepicker({
+				language:'zh-CN', // 语言
+				format: 'yyyy-mm-dd', // 日期的格式
+				minView: 'month', // 可以选择的最小视图
+				initData: new Date(), // 初始化显示的日期
+				autoclose: true, // 选择完日期后是否自动关闭日历
+				todayBtn:true, // 设置是否显示"今天"按钮，默认是false
+				clearBtn: true // 设置是否显示"清空"按钮，默认是false
+			});
+
 			// 市场活动页面加载完之后，查询所有数据的第一页以及所有数据的总条数
 			queryActivityByConditionForPage(1, 10);
 
