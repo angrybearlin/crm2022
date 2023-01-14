@@ -88,4 +88,11 @@ public interface ClueMapper {
      * @return
      */
     Clue selectClueForConvertById(String id);
+
+    /**
+     * 修改线索
+     * @param clue
+     * @return
+     */
+    int updateClue(Clue clue);
 }

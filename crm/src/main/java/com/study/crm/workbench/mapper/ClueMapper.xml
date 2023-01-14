@@ -412,4 +412,13 @@
     from tbl_clue
     where id=#{id}
   </select>
+
+  <update id="updateClue" parameterType="com.study.crm.workbench.domain.Clue">
+    update tbl_clue
+    set fullname=#{fullname}, appellation=#{appellation}, owner=#{owner}, company=#{company}, job=#{job},
+        email=#{email}, phone=#{phone}, website=#{website}, mphone=#{mphone}, state=#{state},
+        source=#{source}, edit_by=#{editBy}, edit_time=#{editTime}, description=#{description},
+        contact_summary=#{contactSummary}, next_contact_time=#{nextContactTime}, address=#{address}
+    where id=#{id}
+  </update>
 </mapper>

@@ -23,6 +23,7 @@ import org.apache.poi.hssf.record.DVALRecord;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.util.*;
@@ -47,6 +48,11 @@ public class ClueController {
     @Autowired
     private ClueActivityRelationService clueActivityRelationService;
 
+    /**
+     * 跳转到线索页面
+     * @param request
+     * @return
+     */
     @RequestMapping("/workbench/clue/index.do")
     public String index(HttpServletRequest request) {
         List<User> userList = userService.queryAllUsers();
@@ -60,6 +66,12 @@ public class ClueController {
         return "workbench/clue/index";
     }
 
+    /**
+     * 保存新增线索
+     * @param clue
+     * @param session
+     * @return
+     */
     @RequestMapping("/workbench/clue/saveCreateClue.do")
     @ResponseBody
     public Object saveCreateClue(Clue clue, HttpSession session) {
@@ -85,6 +97,19 @@ public class ClueController {
         return retValue;
     }
 
+    /**
+     * 条件查询线索并分页
+     * @param fullname
+     * @param company
+     * @param phone
+     * @param source
+     * @param owner
+     * @param mphone
+     * @param state
+     * @param pageNo
+     * @param pageSize
+     * @return
+     */
     @RequestMapping("/workbench/clue/queryClueByConditionForPage.do")
     @ResponseBody
     public Object queryClueByConditionForPage(String fullname, String company, String phone, String source, String owner,
@@ -108,6 +133,12 @@ public class ClueController {
         return resultMap;
     }
 
+    /**
+     * 跳转到线索详情页
+     * @param clueId
+     * @param request
+     * @return
+     */
     @RequestMapping("/workbench/clue/clueDetail.do")
     public String clueDetail(String clueId, HttpServletRequest request) {
         Clue clue = clueService.queryClueForDetailById(clueId);
@@ -119,6 +150,12 @@ public class ClueController {
         return "workbench/clue/detail";
     }
 
+    /**
+     * 查询和当前线索不关联的其他市场活动
+     * @param activityName
+     * @param clueId
+     * @return
+     */
     @RequestMapping("/workbench/clue/selectActivityForDetailByNameExcludeClueId.do")
     @ResponseBody
     public Object selectActivityForDetailByNameExcludeClueId(String activityName, String clueId) {
@@ -133,6 +170,12 @@ public class ClueController {
         return retValue;
     }
 
+    /**
+     * 新增线索和市场活动绑定关系
+     * @param activityIds
+     * @param clueId
+     * @return
+     */
     @RequestMapping("/workbench/clue/insertBundRelation.do")
     @ResponseBody
     public Object insertBundRelation(String[] activityIds, String clueId) {
@@ -163,6 +206,11 @@ public class ClueController {
         return retValue;
     }
 
+    /**
+     * 解除线索和市场活动绑定关系
+     * @param relation
+     * @return
+     */
     @RequestMapping("/workbench/clue/unBundRelation.do")
     @ResponseBody
     public Object unBundRelation(ClueActivityRelation relation) {
@@ -183,6 +231,12 @@ public class ClueController {
         return retValue;
     }
 
+    /**
+     * 跳转到线索转换页面
+     * @param id
+     * @param request
+     * @return
+     */
     @RequestMapping("/workbench/clue/toConvert.do")
     public String toConvert(String id, HttpServletRequest request) {
         Clue clue = clueService.queryClueForDetailById(id);
@@ -192,6 +246,12 @@ public class ClueController {
         return "workbench/clue/convert";
     }
 
+    /**
+     * 查询和当前线索绑定的市场活动
+     * @param activityName
+     * @param clueId
+     * @return
+     */
     @RequestMapping("/workbench/clue/selectActivityForConvertByNameIncludeClueId.do")
     @ResponseBody
     public Object selectActivityForConvertByNameIncludeClueId(String activityName, String clueId) {
@@ -206,6 +266,18 @@ public class ClueController {
         return retValue;
     }
 
+    /**
+     * 转换线索
+     * @param clueId
+     * @param money
+     * @param name
+     * @param expectedDate
+     * @param stage
+     * @param activityId
+     * @param session
+     * @param isCreateTran
+     * @return
+     */
     @RequestMapping("/workbench/clue/convertClue.do")
     @ResponseBody
     public Object convertClue(String clueId, String money, String name, String expectedDate, String stage, String activityId,
@@ -229,6 +301,64 @@ public class ClueController {
             retValue.setCode(Contants.RETURN_OBJECT_CODE_FAIL);
             retValue.setMsg("系统忙，请稍后重试。。。");
         }
+        return retValue;
+    }
+
+    /**
+     * 修改线索
+     * @param params
+     * @param session
+     * @return
+     */
+    @RequestMapping("/workbench/clue/updateClue.do")
+    @ResponseBody
+    public Object updateClue(@RequestParam Map<String, Object> params, HttpSession session) {
+        Clue clue = new Clue();
+        User user = (User) session.getAttribute(Contants.SESSION_USER);
+        clue.setId((String) params.get("id"));
+        clue.setAddress((String) params.get("address"));
+        clue.setAppellation((String) params.get("appellation"));
+        clue.setCompany((String) params.get("company"));
+        clue.setContactSummary((String) params.get("contactSummary"));
+        clue.setDescription((String) params.get("description"));
+        clue.setEmail((String) params.get("email"));
+        clue.setFullname((String) params.get("fullname"));
+        clue.setJob((String) params.get("job"));
+        clue.setMphone((String) params.get("mphone"));
+        clue.setNextContactTime((String) params.get("nextContactTime"));
+        clue.setOwner((String) params.get("owner"));
+        clue.setSource((String) params.get("source"));
+        clue.setState((String) params.get("state"));
+        clue.setWebsite((String) params.get("website"));
+        clue.setPhone((String) params.get("phone"));
+        clue.setEditBy(user.getId());
+        clue.setEditTime(DateUtil.formatDateTime(new Date()));
+        RetValue retValue = new RetValue();
+        try {
+            int count = clueService.updateClue(clue);
+            if (count == 1) {
+                retValue.setCode(Contants.RETURN_OBJECT_CODE_SUCCESS);
+                retValue.setMsg("更新成功");
+            } else {
+                retValue.setCode(Contants.RETURN_OBJECT_CODE_FAIL);
+                retValue.setMsg("系统忙，请稍后再试。。。");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            retValue.setCode(Contants.RETURN_OBJECT_CODE_FAIL);
+            retValue.setMsg("系统忙，请稍后再试。。。");
+        }
+        return retValue;
+    }
+
+    @RequestMapping("/workbench/clue/selectClueDetailForUpdate.do")
+    @ResponseBody
+    public Object selectClueDetailForUpdate(String clueId) {
+        Clue clue = clueService.queryClueDetailById(clueId);
+        RetValue retValue = new RetValue();
+        retValue.setCode(Contants.RETURN_OBJECT_CODE_SUCCESS);
+        retValue.setMsg("OK");
+        retValue.setData(clue);
         return retValue;
     }
 }

@@ -200,4 +200,14 @@ public class ClueServiceImpl implements ClueService {
         // 删除该线索
         clueMapper.deleteByPrimaryKey(clueId);
     }
+
+    @Override
+    public int updateClue(Clue clue) {
+        return clueMapper.updateClue(clue);
+    }
+
+    @Override
+    public Clue queryClueDetailById(String id) {
+        return clueMapper.selectByPrimaryKey(id);
+    }
 }
