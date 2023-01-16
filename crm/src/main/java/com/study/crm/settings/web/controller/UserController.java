@@ -46,12 +46,12 @@ public class UserController {
     @ResponseBody
     @RequestMapping("/settings/qx/user/login.do")
     public Object login(String loginAct, String loginPwd, String isRemPwd, HttpServletRequest request, HttpServletResponse response, HttpSession httpSession) {
+        // 构造返回结果包装对象
+        RetValue retValue = new RetValue();
         // 封装参数
         Map<String, Object> map = new HashMap<>();
         map.put("loginAct", loginAct);
         map.put("loginPwd", loginPwd);
-        // 构造返回结果包装对象
-        RetValue retValue = new RetValue();
         // 获取从数据库中查询到的数据
         User user = userService.queryUserByActAndPwd(map);
         // 先进行异常判断，先将code码置为失败

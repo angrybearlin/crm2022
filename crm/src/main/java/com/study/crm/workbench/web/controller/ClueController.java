@@ -351,6 +351,11 @@ public class ClueController {
         return retValue;
     }
 
+    /**
+     * 查询出线索的信息展示在线索修改页面
+     * @param clueId
+     * @return
+     */
     @RequestMapping("/workbench/clue/selectClueDetailForUpdate.do")
     @ResponseBody
     public Object selectClueDetailForUpdate(String clueId) {
@@ -359,6 +364,22 @@ public class ClueController {
         retValue.setCode(Contants.RETURN_OBJECT_CODE_SUCCESS);
         retValue.setMsg("OK");
         retValue.setData(clue);
+        return retValue;
+    }
+
+    @RequestMapping("/workbench/clue/deleteClue.do")
+    @ResponseBody
+    public Object deleteClue(String[] ids) {
+        RetValue retValue = new RetValue();
+        try {
+            clueService.deleteClueByIds(ids);
+            retValue.setCode(Contants.RETURN_OBJECT_CODE_SUCCESS);
+            retValue.setMsg("删除成功");
+        } catch (Exception e) {
+            e.printStackTrace();
+            retValue.setCode(Contants.RETURN_OBJECT_CODE_FAIL);
+            retValue.setMsg("系统忙，请稍后重试。。。");
+        }
         return retValue;
     }
 }

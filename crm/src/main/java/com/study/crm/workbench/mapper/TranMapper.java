@@ -88,4 +88,11 @@ public interface TranMapper {
      * @return
      */
     List<FunnelVO> selectCountOfTranGroupByStage();
+
+    /**
+     * 根据customerId查询
+     * @param customerId
+     * @return
+     */
+    List<Tran> selectTranByCustomerId(String customerId);
 }

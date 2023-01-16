@@ -3,6 +3,7 @@ package com.study.crm.workbench.mapper;
 import com.study.crm.workbench.domain.Customer;
 
 import java.util.List;
+import java.util.Map;
 
 public interface CustomerMapper {
     /**
@@ -73,4 +74,53 @@ public interface CustomerMapper {
      * @return
      */
     Customer selectCustomerByName(String customerName);
+
+    /**
+     * 条件查询客户并分页
+     * @param map
+     * @return
+     */
+    List<Customer> selectCustomerByConditionForPages(Map<String, Object> map);
+
+    /**
+     * 统计条件查询后客户的数量
+     * @param map
+     * @return
+     */
+    int selectCountOfCustomerByCondition(Map<String, Object> map);
+
+    /**
+     * 新增客户
+     * @param customer
+     * @return
+     */
+    int insertCustomer(Customer customer);
+
+    /**
+     * 修改客户
+     * @param customer
+     * @return
+     */
+    int updateCustomer(Customer customer);
+
+    /**
+     * 查询客户信息展示在修改页面
+     * @param id
+     * @return
+     */
+    Customer selectCustomerForUpdate(String id);
+
+    /**
+     * 根据id删除客户
+     * @param ids
+     * @return
+     */
+    int deleteCustomerById(String[] ids);
+
+    /**
+     * 根据id查询客户信息展示在详情页上
+     * @param id
+     * @return
+     */
+    Customer selectCustomerForDetailById(String id);
 }

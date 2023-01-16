@@ -95,4 +95,11 @@ public interface ClueMapper {
      * @return
      */
     int updateClue(Clue clue);
+
+    /**
+     * 通过id删除一个或多个线索
+     * @param ids
+     * @return
+     */
+    int deleteClueByIds(String[] ids);
 }

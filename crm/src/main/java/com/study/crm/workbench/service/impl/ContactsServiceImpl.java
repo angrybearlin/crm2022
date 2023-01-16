@@ -16,4 +16,9 @@ public class ContactsServiceImpl implements ContactsService {
     public List<Contacts> queryContactsByName(String contactsName) {
         return contactsMapper.selectContactsByName(contactsName);
     }
+
+    @Override
+    public List<Contacts> queryContactsByCustomerId(String customerId) {
+        return contactsMapper.selectContactsByCustomerId(customerId);
+    }
 }

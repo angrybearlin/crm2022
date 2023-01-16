@@ -18,6 +18,7 @@ import org.springframework.stereotype.Service;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.ResourceBundle;
 
 @Service("tranService")
 public class TranServiceImpl implements TranService {
@@ -82,8 +83,6 @@ public class TranServiceImpl implements TranService {
     @Override
     public List<Tran> queryTranByConditionForPages(Map<String, Object> map) {
         List tranList = tranMapper.selectTranByConditionForPages(map);
-        System.out.println("------------------------------------------");
-        System.out.println(tranList);
         for (int i=0; i<tranList.size(); i++) {
             if (((Map)tranList.get(i)).get("source") == null) {
                 ((Map)tranList.get(i)).put("source", "无");
@@ -108,5 +107,17 @@ public class TranServiceImpl implements TranService {
     @Override
     public List<FunnelVO> queryCountOfTranGroupByStage() {
         return tranMapper.selectCountOfTranGroupByStage();
+    }
+
+    @Override
+    public List<Tran> queryTranByCustomerId(String customerId) {
+        List<Tran> tranList = tranMapper.selectTranByCustomerId(customerId);
+        for (Tran tran: tranList) {
+            String stage = tran.getStage();
+            ResourceBundle bundle = ResourceBundle.getBundle("possibility");
+            String possibility = bundle.getString(stage);
+            tran.setPossibility(possibility);
+        }
+        return tranList;
     }
 }

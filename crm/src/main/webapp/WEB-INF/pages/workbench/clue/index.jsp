@@ -160,20 +160,20 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":" + 
 		$("#saveEditClueBtn").click(function () {
 			var id = $("#edit-id").val();
 			var owner = $("#edit-owner").val();
-			var company = $("#edit-company").val();
+			var company = $.trim($("#edit-company").val());
 			var appellation = $("#edit-appellation").val();
-			var fullname = $("#edit-fullname").val();
-			var job = $("#edit-job").val();
-			var email = $("#edit-email").val();
-			var phone = $("#edit-phone").val();
-			var website = $("#edit-website").val();
-			var mphone = $("#edit-mphone").val();
+			var fullname = $.trim($("#edit-fullname").val());
+			var job = $.trim($("#edit-job").val());
+			var email = $.trim($("#edit-email").val());
+			var phone = $.trim($("#edit-phone").val());
+			var website = $.trim($("#edit-website").val());
+			var mphone = $.trim($("#edit-mphone").val());
 			var state = $("#edit-state").val();
 			var source = $("#edit-source").val();
-			var description = $("#edit-description").val();
-			var contactSummary = $("#edit-contactSummary").val();
-			var nextContactTime = $("#edit-nextContactTime").val();
-			var address = $("#edit-address").val();
+			var description = $.trim($("#edit-description").val());
+			var contactSummary = $.trim($("#edit-contactSummary").val());
+			var nextContactTime = $.trim($("#edit-nextContactTime").val());
+			var address = $.trim($("#edit-address").val());
 
 			// 表单验证
 			// 带星号的非空
@@ -242,6 +242,40 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":" + 
 			});
 		});
 
+		// 给删除按钮添加单击事件
+		$("#deleteClueBtn").click(function () {
+			// 收集参数
+			// 获取列表中所有被选中的checkbox
+			var checkedIds = $("#tBody input[type='checkbox']:checked");
+			if (checkedIds.size() == 0) {
+				alert("请选择要删除的线索");
+				return;
+			}
+
+			if (window.confirm("确定删除吗？")) {
+				var ids = "";
+				$.each(checkedIds, function () {
+					ids += "ids=" + this.value + "&";
+				});
+				ids.substr(0, ids.length-1);
+				// 发送请求
+				$.ajax({
+					url: 'workbench/clue/deleteClue.do',
+					data: ids,
+					type: 'post',
+					dataType: 'json',
+					success: function (data) {
+						if (data.code == '0') {
+							queryClueByConditionForPage(1, $("#mydiv").bs_pagination('getOption', 'rowsPerPage'));
+						} else {
+							// 提示信息
+							alert(data.msg);
+						}
+					}
+				});
+			}
+		});
+
 		$(function () {
 			$("#create-nextContactTime").datetimepicker({
 				language:'zh-CN', // 语言
@@ -251,6 +285,31 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":" + 
 				autoclose: true, // 选择完日期后是否自动关闭日历
 				todayBtn:true, // 设置是否显示"今天"按钮，默认是false
 				clearBtn: true // 设置是否显示"清空"按钮，默认是false
+			});
+
+			$("#edit-nextContactTime").datetimepicker({
+				language:'zh-CN', // 语言
+				format: 'yyyy-mm-dd', // 日期的格式
+				minView: 'month', // 可以选择的最小视图
+				initData: new Date(), // 初始化显示的日期
+				autoclose: true, // 选择完日期后是否自动关闭日历
+				todayBtn:true, // 设置是否显示"今天"按钮，默认是false
+				clearBtn: true // 设置是否显示"清空"按钮，默认是false
+			});
+
+			// 给全选按钮添加单击事件
+			$("#checkAll").click(function () {
+				$("#tBody input[type='checkbox']").prop("checked", this.checked);
+			});
+
+			$("#tBody").on("click", "input[type='checkbox']", function () {
+				if ($("#tBody input[type='checkbox']").size() == $("#tBody input[type='checkbox']:checked").size()) {
+					// 如果列表中的所有checkbox都选中，则"全选"按钮也选中
+					$("#checkAll").prop("checked", true);
+				} else {
+					// 如果至少有一个没选中，则"全选"按钮也取消
+					$("#checkAll").prop("checked", false);
+				}
 			});
 
 			queryClueByConditionForPage(1, 10);
@@ -717,7 +776,7 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":" + 
 				<div class="btn-group" style="position: relative; top: 18%;">
 				  <button type="button" class="btn btn-primary" id="createClueBtn"><span class="glyphicon glyphicon-plus"></span> 创建</button>
 				  <button type="button" class="btn btn-default" id="editClueBtn"><span class="glyphicon glyphicon-pencil"></span> 修改</button>
-				  <button type="button" class="btn btn-danger"><span class="glyphicon glyphicon-minus"></span> 删除</button>
+				  <button type="button" class="btn btn-danger" id="deleteClueBtn"><span class="glyphicon glyphicon-minus"></span> 删除</button>
 				</div>
 
 

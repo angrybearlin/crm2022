@@ -210,4 +210,14 @@ public class ClueServiceImpl implements ClueService {
     public Clue queryClueDetailById(String id) {
         return clueMapper.selectByPrimaryKey(id);
     }
+
+    @Override
+    public void deleteClueByIds(String[] ids) {
+        clueMapper.deleteClueByIds(ids);
+        // 删除该线索和市场活动的关联关系和线索备注
+        for (String id: ids) {
+            clueActivityRelationMapper.deleteClueActivityRelationByClueId(id);
+            clueRemarkMapper.deleteClueRemarkByClueId(id);
+        }
+    }
 }

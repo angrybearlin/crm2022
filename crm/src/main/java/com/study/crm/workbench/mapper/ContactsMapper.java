@@ -66,4 +66,6 @@ public interface ContactsMapper {
      * @return
      */
     List<Contacts> selectContactsByName(String contactsName);
+
+    List<Contacts> selectContactsByCustomerId(String customerId);
 }
