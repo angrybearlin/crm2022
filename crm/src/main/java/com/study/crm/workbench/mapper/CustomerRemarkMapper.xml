@@ -174,4 +174,29 @@
        #{obj.editFlag}, #{obj.customerId})
     </foreach>
   </insert>
+
+  <select id="selectCustomerRemarkByCustomerId" parameterType="string" resultMap="BaseResultMap">
+    select cr.id, cr.note_content, u1.name as create_by, cr.create_time, u2.name as edit_by, cr.edit_time, cr.edit_flag
+    from tbl_customer_remark cr
+    join tbl_user u1 on cr.create_by=u1.id
+    left join tbl_user u2 on cr.edit_by=u2.id
+    where cr.customer_id=#{customerId}
+    order by cr.create_time asc
+  </select>
+
+  <insert id="insertCustomerRemark" parameterType="com.study.crm.workbench.domain.CustomerRemark">
+    insert into tbl_customer_remark(id, note_content, create_by, create_time, edit_flag, customer_id)
+    values (#{id}, #{noteContent}, #{createBy}, #{createTime}, #{editFlag}, #{customerId})
+  </insert>
+
+  <update id="updateCustomerRemark" parameterType="com.study.crm.workbench.domain.CustomerRemark">
+    update tbl_customer_remark
+    set note_content=#{noteContent}, edit_by=#{editBy}, edit_time=#{editTime},
+        edit_flag=#{editFlag}
+    where id=#{id}
+  </update>
+
+  <delete id="deleteCustomerRemarkById" parameterType="string">
+    delete from tbl_customer_remark where id=#{id}
+  </delete>
 </mapper>

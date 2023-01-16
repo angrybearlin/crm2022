@@ -46,55 +46,61 @@ public class UserController {
     @ResponseBody
     @RequestMapping("/settings/qx/user/login.do")
     public Object login(String loginAct, String loginPwd, String isRemPwd, HttpServletRequest request, HttpServletResponse response, HttpSession httpSession) {
-        // 封装参数
-        Map<String, Object> map = new HashMap<>();
-        map.put("loginAct", loginAct);
-        map.put("loginPwd", loginPwd);
         // 构造返回结果包装对象
         RetValue retValue = new RetValue();
-        // 获取从数据库中查询到的数据
-        User user = userService.queryUserByActAndPwd(map);
-        // 先进行异常判断，先将code码置为失败
-        retValue.setCode(Contants.RETURN_OBJECT_CODE_FAIL);
-        // 如果数据为空，用户名或密码错误
-        if (user == null) {
-            retValue.setMsg("用户名或密码错误");
-        } else {
-            // 当前时间大于用户到期时间，用户已到期
-            String nowTime = DateUtil.formatDateTime(new Date());
-            if (nowTime.compareTo(user.getExpireTime()) > 0) {
-                retValue.setMsg("用户已到期");
-            } else if ("0".equals(user.getLockState())) {
-                // LockState为0 ，表示用户已被锁定
-                retValue.setMsg("用户已被锁定");
-            } else if (!user.getAllowIps().contains(request.getRemoteAddr())) {
-                // 用户目前IP不在AllowIps内，则用户访问IP受限
-                retValue.setMsg("用户访问IP受限");
+        try {
+            // 封装参数
+            Map<String, Object> map = new HashMap<>();
+            map.put("loginAct", loginAct);
+            map.put("loginPwd", loginPwd);
+
+            // 获取从数据库中查询到的数据
+            User user = userService.queryUserByActAndPwd(map);
+            // 先进行异常判断，先将code码置为失败
+            retValue.setCode(Contants.RETURN_OBJECT_CODE_FAIL);
+            // 如果数据为空，用户名或密码错误
+            if (user == null) {
+                retValue.setMsg("用户名或密码错误");
             } else {
-                // 以上条件都满足，用户登录成功，code码置为成功
-                retValue.setCode("0");
-                retValue.setMsg("OK");
-                httpSession.setAttribute(Contants.SESSION_USER, user);
-                Cookie c1 = null;
-                Cookie c2 = null;
-                // 如果isRemPwd为true，记住账号密码，写进cookie
-                if ("true".equals(isRemPwd)) {
-                    c1 = new Cookie("loginAct", loginAct);
-                    c1.setMaxAge(10 * 24 * 60 * 60);
-                    response.addCookie(c1);
-                    c2 = new Cookie("loginPwd", loginPwd);
-                    c2.setMaxAge(10 * 24 * 60 * 60);
-                    response.addCookie(c2);
-                } else if ("false".equals(isRemPwd)){
-                    c1 = new Cookie("loginAct", "");
-                    c1.setMaxAge(0);
-                    response.addCookie(c1);
-                    c2 = new Cookie("loginPwd", "");
-                    c2.setMaxAge(0);
-                    response.addCookie(c2);
+                // 当前时间大于用户到期时间，用户已到期
+                String nowTime = DateUtil.formatDateTime(new Date());
+                if (nowTime.compareTo(user.getExpireTime()) > 0) {
+                    retValue.setMsg("用户已到期");
+                } else if ("0".equals(user.getLockState())) {
+                    // LockState为0 ，表示用户已被锁定
+                    retValue.setMsg("用户已被锁定");
+                } else if (!user.getAllowIps().contains(request.getRemoteAddr())) {
+                    // 用户目前IP不在AllowIps内，则用户访问IP受限
+                    retValue.setMsg("用户访问IP受限");
+                } else {
+                    // 以上条件都满足，用户登录成功，code码置为成功
+                    retValue.setCode("0");
+                    retValue.setMsg("OK");
+                    httpSession.setAttribute(Contants.SESSION_USER, user);
+                    Cookie c1 = null;
+                    Cookie c2 = null;
+                    // 如果isRemPwd为true，记住账号密码，写进cookie
+                    if ("true".equals(isRemPwd)) {
+                        c1 = new Cookie("loginAct", loginAct);
+                        c1.setMaxAge(10 * 24 * 60 * 60);
+                        response.addCookie(c1);
+                        c2 = new Cookie("loginPwd", loginPwd);
+                        c2.setMaxAge(10 * 24 * 60 * 60);
+                        response.addCookie(c2);
+                    } else if ("false".equals(isRemPwd)){
+                        c1 = new Cookie("loginAct", "");
+                        c1.setMaxAge(0);
+                        response.addCookie(c1);
+                        c2 = new Cookie("loginPwd", "");
+                        c2.setMaxAge(0);
+                        response.addCookie(c2);
+                    }
                 }
             }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
+
         return retValue;
     }
 

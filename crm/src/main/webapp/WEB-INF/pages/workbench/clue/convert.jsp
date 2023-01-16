@@ -27,6 +27,16 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":" + 
 			}
 		});
 
+		$("#expectedClosingDate").datetimepicker({
+			language:'zh-CN', // 语言
+			format: 'yyyy-mm-dd', // 日期的格式
+			minView: 'month', // 可以选择的最小视图
+			initData: new Date(), // 初始化显示的日期
+			autoclose: true, // 选择完日期后是否自动关闭日历
+			todayBtn:true, // 设置是否显示"今天"按钮，默认是false
+			clearBtn: true // 设置是否显示"清空"按钮，默认是false
+		});
+
 		// 给市场活动源搜索按钮添加单击事件
 		$("#searchActivityBtn").click(function () {
 			// 初始化工作

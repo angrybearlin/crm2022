@@ -421,4 +421,12 @@
         contact_summary=#{contactSummary}, next_contact_time=#{nextContactTime}, address=#{address}
     where id=#{id}
   </update>
+
+  <delete id="deleteClueByIds" parameterType="string">
+    delete from tbl_clue
+    where id in
+    <foreach collection="array" item="id" separator="," open="(" close=")">
+      #{id}
+    </foreach>
+  </delete>
 </mapper>

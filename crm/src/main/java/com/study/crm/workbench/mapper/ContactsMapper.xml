@@ -286,4 +286,10 @@
     from tbl_contacts
     where fullname like "%"#{contactsName}"%"
   </select>
+
+  <select id="selectContactsByCustomerId" parameterType="string" resultMap="BaseResultMap">
+    select id, fullname, email, mphone
+    from tbl_contacts
+    where customer_id=#{customerId}
+  </select>
 </mapper>

@@ -204,7 +204,7 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":" + 
 					type: 'post',
 					dataType: 'json',
 					success: function (data) {
-						if (data.code == 0) {
+						if (data.code == '0') {
 							queryActivityByConditionForPage(1, $("#mydiv").bs_pagination('getOption', 'rowsPerPage'));
 						} else {
 							// 提示信息

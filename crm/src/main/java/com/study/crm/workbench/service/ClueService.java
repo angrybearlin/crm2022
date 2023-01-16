@@ -19,4 +19,6 @@ public interface ClueService {
     int updateClue(Clue clue);
 
     Clue queryClueDetailById(String id);
+
+    void deleteClueByIds(String[] ids);
 }

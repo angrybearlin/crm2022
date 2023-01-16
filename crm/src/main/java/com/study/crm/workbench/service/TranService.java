@@ -17,4 +17,6 @@ public interface TranService {
     Tran queryTranForDetailById(String id);
 
     List<FunnelVO> queryCountOfTranGroupByStage();
+
+    List<Tran> queryTranByCustomerId(String customerId);
 }

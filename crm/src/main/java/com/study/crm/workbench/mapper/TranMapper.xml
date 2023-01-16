@@ -387,4 +387,12 @@
     join tbl_dic_value dv on t.stage=dv.id
     group by t.stage
   </select>
+
+  <select id="selectTranByCustomerId" parameterType="string" resultMap="BaseResultMap">
+    select t.id, t.name, t.money, dv1.value as stage, t.expected_date, dv2.value as type
+    from tbl_tran t
+    join tbl_dic_value dv1 on t.stage=dv1.id
+    left join  tbl_dic_value dv2 on t.type=dv2.id
+    where t.customer_id=#{customerId}
+  </select>
 </mapper>

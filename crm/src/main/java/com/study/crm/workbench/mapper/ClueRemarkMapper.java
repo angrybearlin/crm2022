@@ -73,4 +73,18 @@ public interface ClueRemarkMapper {
      * @return
      */
     int deleteClueRemarkByClueId(String clueId);
+
+    /**
+     * 新增线索备注
+     * @param remark
+     * @return
+     */
+    int insertClueRemark(ClueRemark remark);
+
+    /**
+     * 修改线索备注
+     * @param remark
+     * @return
+     */
+    int updateClueRemark(ClueRemark remark);
 }
