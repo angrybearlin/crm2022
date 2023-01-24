@@ -395,4 +395,56 @@
     left join  tbl_dic_value dv2 on t.type=dv2.id
     where t.customer_id=#{customerId}
   </select>
+
+  <delete id="deleteTranById" parameterType="string">
+    delete
+    from tbl_tran
+    where id=#{id};
+  </delete>
+
+  <delete id="deleteTranByCustomerId" parameterType="string">
+    delete
+    from tbl_tran
+    where customer_id=#{customerId};
+  </delete>
+
+  <select id="selectTranByContactId" parameterType="string" resultMap="BaseResultMap">
+    select t.id, t.name, dv1.value as stage, t.expected_date, dv2.value as type, t.money
+    from tbl_tran t
+    join tbl_dic_value dv1 on t.stage=dv1.id
+    left join tbl_dic_value dv2 on t.type=dv2.id
+    where t.contacts_id=#{contactId}
+  </select>
+
+  <delete id="deleteTranByContactsId" parameterType="string">
+    delete
+    from tbl_tran t
+    where contacts_id=#{contactsId};
+  </delete>
+
+  <update id="updateTranById" parameterType="com.study.crm.workbench.domain.Tran">
+    update tbl_tran
+    set owner=#{owner}, money=#{money}, name=#{name}, expected_date=#{expectedDate}, customer_id=#{customerId},
+        stage=#{stage}, type=#{type}, source=#{source}, activity_id=#{activityId},
+        contacts_id=#{contactsId}, edit_by=#{editBy}, edit_time=#{editTime}, description=#{description},
+        contact_summary=#{contactSummary}, next_contact_time=#{nextContactTime}
+    where id=#{id}
+  </update>
+
+  <select id="selectTranForUpdateById" parameterType="com.study.crm.workbench.domain.Tran" resultType="map">
+    select t.owner, t.money, t.name, t.expected_date, cus.name as customerName, dv.value as stage, t.source, t.type, a.name as activityName,
+           c.fullname as contactsName, t.activity_id, t.contacts_id, t.description, t.contact_summary, t.next_contact_time, t.id
+    from tbl_tran t
+    left join tbl_dic_value dv on t.stage=dv.id
+    left join tbl_activity a on t.activity_id=a.id
+    left join tbl_contacts c on t.contacts_id=c.id
+    join tbl_customer cus on t.customer_id=cus.id
+    where t.id=#{id}
+  </select>
+
+  <select id="selectStageIdOfTran" parameterType="string" resultType="string">
+    select stage
+    from tbl_tran
+    where id=#{id}
+  </select>
 </mapper>

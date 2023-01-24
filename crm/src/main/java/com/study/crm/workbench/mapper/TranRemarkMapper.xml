@@ -182,4 +182,21 @@
     left join tbl_user u2 on tr.edit_by=u2.id
     where tr.tran_id=#{tranId}
   </select>
+
+  <insert id="insertTranRemark" parameterType="com.study.crm.workbench.domain.TranRemark">
+    insert into tbl_tran_remark (id, note_content, create_by, create_time, edit_flag, tran_id)
+    values (#{id}, #{noteContent}, #{createBy}, #{createTime}, #{editFlag}, #{tranId});
+  </insert>
+
+  <update id="updateTranRemark" parameterType="com.study.crm.workbench.domain.TranRemark">
+    update tbl_tran_remark
+    set note_content=#{noteContent}, edit_by=#{editBy}, edit_time=#{editTime}, edit_flag=#{editFlag}
+    where id=#{id};
+  </update>
+
+  <delete id="deleteTranRemarkById" parameterType="string">
+    delete
+    from tbl_tran_remark
+    where id=#{id};
+  </delete>
 </mapper>

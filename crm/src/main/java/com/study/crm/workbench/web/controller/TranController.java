@@ -2,6 +2,8 @@ package com.study.crm.workbench.web.controller;
 
 import com.study.crm.commons.contants.Contants;
 import com.study.crm.commons.domain.RetValue;
+import com.study.crm.commons.utils.DateUtil;
+import com.study.crm.commons.utils.UUIDUtil;
 import com.study.crm.settings.domain.DicValue;
 import com.study.crm.settings.domain.User;
 import com.study.crm.settings.service.DicValueService;
@@ -16,10 +18,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.ResourceBundle;
+import java.util.*;
 
 @Controller("tranController")
 public class TranController {
@@ -79,6 +78,31 @@ public class TranController {
         request.setAttribute("transactionTypeList", transactionTypeList);
         request.setAttribute("sourceList", sourceList);
         return "workbench/transaction/save";
+    }
+
+    /**
+     * 跳转到修改交易页面
+     * @param request
+     * @param id
+     * @return
+     */
+    @RequestMapping("/workbench/transaction/toEdit.do")
+    public String toEdit(HttpServletRequest request, String id) {
+        List<User> userList = userService.queryAllUsers();
+        List<DicValue> stageList = dicValueService.queryDicValueByTypeCode("stage");
+        List<DicValue> transactionTypeList = dicValueService.queryDicValueByTypeCode("transactionType");
+        List<DicValue> sourceList = dicValueService.queryDicValueByTypeCode("source");
+        Map<String, Object> map = tranService.queryTranForUpdateById(id);
+        ResourceBundle bundle = ResourceBundle.getBundle("possibility");
+        String possibility = bundle.getString((String) map.get("stage"));
+        request.setAttribute("userList", userList);
+        request.setAttribute("stageList", stageList);
+        request.setAttribute("transactionTypeList", transactionTypeList);
+        request.setAttribute("sourceList", sourceList);
+        request.setAttribute("tran", map);
+        request.setAttribute("possibility", possibility);
+        request.setAttribute("stageId", tranService.queryStageIdOfTran(id));
+        return "workbench/transaction/edit";
     }
 
     /**
@@ -241,6 +265,176 @@ public class TranController {
         retValue.setCode(Contants.RETURN_OBJECT_CODE_SUCCESS);
         retValue.setMsg("OK");
         retValue.setData(funnelVOList);
+        return retValue;
+    }
+
+    /**
+     * 根据id删除交易
+     * @param id
+     * @return
+     */
+    @RequestMapping("/workbench/transaction/deleteTranById.do")
+    @ResponseBody
+    public Object deleteTranById(String id) {
+        RetValue retValue = new RetValue();
+        try {
+            int count = tranService.deleteTranById(id);
+            if (count == 1) {
+                retValue.setCode(Contants.RETURN_OBJECT_CODE_SUCCESS);
+                retValue.setMsg("删除成功");
+            } else {
+                retValue.setCode(Contants.RETURN_OBJECT_CODE_FAIL);
+                retValue.setMsg("系统忙，请稍后再试。。。");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            retValue.setCode(Contants.RETURN_OBJECT_CODE_FAIL);
+            retValue.setMsg("系统忙，请稍后再试。。。");
+        }
+        return retValue;
+    }
+
+    /**
+     * 修改交易
+     * @param map
+     * @param session
+     * @return
+     */
+    @RequestMapping("/workbench/transaction/editTran.do")
+    @ResponseBody
+    public Object editTran(@RequestParam Map<String, Object> map, HttpSession session) {
+        Tran tran = new Tran();
+        tran.setId((String) map.get("id"));
+        tran.setOwner((String) map.get("owner"));
+        tran.setMoney((String) map.get("money"));
+        tran.setName((String) map.get("name"));
+        tran.setExpectedDate((String) map.get("expectedDate"));
+        Customer customer = customerService.queryCustomerByName((String) map.get("customerName"));
+        tran.setCustomerId(customer.getId());
+        tran.setStage((String) map.get("stage"));
+        tran.setType((String) map.get("type"));
+        tran.setSource((String) map.get("source"));
+        tran.setActivityId((String) map.get("activityId"));
+        tran.setContactsId((String) map.get("contactsId"));
+        tran.setDescription((String) map.get("description"));
+        tran.setContactSummary((String) map.get("contactSummary"));
+        tran.setNextContactTime((String) map.get("nextContactTime"));
+        User user = (User) session.getAttribute(Contants.SESSION_USER);
+        tran.setEditBy(user.getId());
+        tran.setEditTime(DateUtil.formatDateTime(new Date()));
+        TranHistory tranHistory = new TranHistory();
+        tranHistory.setId(UUIDUtil.getUUID());
+        tranHistory.setCreateBy(user.getId());
+        tranHistory.setStage((String) map.get("stage"));
+        tranHistory.setTranId((String) map.get("id"));
+        tranHistory.setMoney((String) map.get("money"));
+        tranHistory.setCreateTime(DateUtil.formatDateTime(new Date()));
+        tranHistory.setExpectedDate((String) map.get("expectedDate"));
+        RetValue retValue = new RetValue();
+        try {
+            int count = tranService.updateTranById(tran, tranHistory);
+            if (count == 2) {
+                retValue.setCode(Contants.RETURN_OBJECT_CODE_SUCCESS);
+                retValue.setMsg("修改成功");
+            } else {
+                retValue.setCode(Contants.RETURN_OBJECT_CODE_FAIL);
+                retValue.setMsg("系统忙，请稍后再试。。。");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            retValue.setCode(Contants.RETURN_OBJECT_CODE_FAIL);
+            retValue.setMsg("系统忙，请稍后再试。。。");
+        }
+        return retValue;
+    }
+
+    /**
+     * 创建交易备注
+     * @param remark
+     * @return
+     */
+    @RequestMapping("/workbench/transaction/insertTranRemark.do")
+    @ResponseBody
+    public Object insertTranRemark(TranRemark remark, HttpSession session) {
+        RetValue retValue = new RetValue();
+        remark.setId(UUIDUtil.getUUID());
+        User user = (User) session.getAttribute(Contants.SESSION_USER);
+        remark.setCreateBy(user.getId());
+        remark.setCreateTime(DateUtil.formatDateTime(new Date()));
+        remark.setEditFlag(Contants.REMARK_HAS_NOT_EDIT);
+        try {
+            int count = tranRemarkService.insertTranRemark(remark);
+            if (count == 1) {
+                retValue.setCode(Contants.RETURN_OBJECT_CODE_SUCCESS);
+                retValue.setMsg("创建成功");
+                retValue.setData(remark);
+            } else {
+                retValue.setCode(Contants.RETURN_OBJECT_CODE_FAIL);
+                retValue.setMsg("系统忙，请稍后再试。。。");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            retValue.setCode(Contants.RETURN_OBJECT_CODE_FAIL);
+            retValue.setMsg("系统忙，请稍后再试。。。");
+        }
+        return retValue;
+    }
+
+    /**
+     * 修改交易备注
+     * @param remark
+     * @param session
+     * @return
+     */
+    @RequestMapping("/workbench/transaction/updateTranRemark.do")
+    @ResponseBody
+    public Object updateTranRemark(TranRemark remark, HttpSession session) {
+        RetValue retValue = new RetValue();
+        User user = (User) session.getAttribute(Contants.SESSION_USER);
+        remark.setEditBy(user.getId());
+        remark.setEditTime(DateUtil.formatDateTime(new Date()));
+        remark.setEditFlag(Contants.REMARK_HAS_EDITED);
+        try {
+            int count = tranRemarkService.updateTranRemark(remark);
+            if (count == 1) {
+                retValue.setCode(Contants.RETURN_OBJECT_CODE_SUCCESS);
+                retValue.setMsg("修改成功");
+                retValue.setData(remark);
+            } else {
+                retValue.setCode(Contants.RETURN_OBJECT_CODE_FAIL);
+                retValue.setMsg("系统忙，请稍后再试。。。");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            retValue.setCode(Contants.RETURN_OBJECT_CODE_FAIL);
+            retValue.setMsg("系统忙，请稍后再试。。。");
+        }
+        return retValue;
+    }
+
+    /**
+     * 删除交易备注
+     * @param id
+     * @return
+     */
+    @RequestMapping("/workbench/transaction/deleteTranRemark.do")
+    @ResponseBody
+    public Object deleteTranRemark(String id) {
+        RetValue retValue = new RetValue();
+        try {
+            int count = tranRemarkService.deleteTranRemarkById(id);
+            if (count == 1) {
+                retValue.setCode(Contants.RETURN_OBJECT_CODE_SUCCESS);
+                retValue.setMsg("删除成功");
+            } else {
+                retValue.setCode(Contants.RETURN_OBJECT_CODE_FAIL);
+                retValue.setMsg("系统忙，请稍后再试。。。");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            retValue.setCode(Contants.RETURN_OBJECT_CODE_FAIL);
+            retValue.setMsg("系统忙，请稍后再试。。。");
+        }
         return retValue;
     }
 }

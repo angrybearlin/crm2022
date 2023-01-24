@@ -55,7 +55,7 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":" + 
 		});
 
 		$("#createCustomerBtn").click(function () {
-			$("#createCustomerForm")[0].reset;
+			$("#createCustomerForm")[0].reset();
 			$("#createCustomerModal").modal("show");
 		});
 
@@ -110,11 +110,11 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":" + 
 			// 获取列表中被选中的checkbox
 			var checkIds = $("#tBody input[type='checkbox']:checked");
 			if (checkIds.size() == 0) {
-				alert("请选择要修改的线索");
+				alert("请选择要修改的客户");
 				return;
 			}
 			if (checkIds.size() > 1 ){
-				alert("每次只能修改一条线索");
+				alert("每次只能修改一个客户");
 				return;
 			}
 			var id = checkIds[0].value;

@@ -87,4 +87,11 @@ public interface CustomerRemarkMapper {
      * @return
      */
     int deleteCustomerRemarkById(String id);
+
+    /**
+     * 根据customerId删除该客户下所有备注
+     * @param customerId
+     * @return
+     */
+    int deleteCustomerRemarkByCustomerId(String customerId);
 }

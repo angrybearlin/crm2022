@@ -1,5 +1,6 @@
 package com.study.crm.workbench.mapper;
 
+import com.study.crm.workbench.domain.Tran;
 import com.study.crm.workbench.domain.TranRemark;
 
 import java.util.List;
@@ -66,4 +67,25 @@ public interface TranRemarkMapper {
      * @return
      */
     List<TranRemark> selectTranRemarkByTranId(String tranId);
+
+    /**
+     * 添加交易备注
+     * @param remark
+     * @return
+     */
+    int insertTranRemark(TranRemark remark);
+
+    /**
+     * 修改交易备注
+     * @param remark
+     * @return
+     */
+    int updateTranRemark(TranRemark remark);
+
+    /**
+     * 删除交易备注
+     * @param id
+     * @return
+     */
+    int deleteTranRemarkById(String id);
 }

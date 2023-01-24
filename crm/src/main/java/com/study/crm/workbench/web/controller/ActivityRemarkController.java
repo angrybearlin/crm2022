@@ -35,7 +35,7 @@ public class ActivityRemarkController {
         remark.setId(UUIDUtil.getUUID());
         remark.setCreateTime(DateUtil.formatDateTime(new Date()));
         remark.setCreateBy(user.getId());
-        remark.setEditFlag(Contants.ACTIVITY_REMARK_HAS_NOT_EDIT);
+        remark.setEditFlag(Contants.REMARK_HAS_NOT_EDIT);
         try {
             int count = activityRemarkService.saveActivityRemark(remark);
             if (count > 0) {
@@ -90,7 +90,7 @@ public class ActivityRemarkController {
         User user = (User) session.getAttribute(Contants.SESSION_USER);
         remark.setEditTime(DateUtil.formatDateTime(new Date()));
         remark.setEditBy(user.getId());
-        remark.setEditFlag(Contants.ACTIVITY_REMARK_HAS_EDITED);
+        remark.setEditFlag(Contants.REMARK_HAS_EDITED);
         try {
             int count = activityRemarkService.saveEditActivityRemark(remark);
             if (count > 0) {

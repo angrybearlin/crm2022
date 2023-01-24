@@ -32,7 +32,7 @@ public class ClueRemarkController {
         remark.setId(UUIDUtil.getUUID());
         remark.setCreateBy(user.getId());
         remark.setCreateTime(DateUtil.formatDateTime(new Date()));
-        remark.setEditFlag(Contants.ACTIVITY_REMARK_HAS_NOT_EDIT);
+        remark.setEditFlag(Contants.REMARK_HAS_NOT_EDIT);
         RetValue retValue = new RetValue();
         try {
             int count = clueRemarkService.insertClueRemark(remark);
@@ -61,7 +61,7 @@ public class ClueRemarkController {
     @ResponseBody
     public Object updateClueRemark(ClueRemark remark, HttpSession session) {
         User user = (User) session.getAttribute(Contants.SESSION_USER);
-        remark.setEditFlag(Contants.ACTIVITY_REMARK_HAS_EDITED);
+        remark.setEditFlag(Contants.REMARK_HAS_EDITED);
         remark.setEditBy(user.getId());
         remark.setEditTime(DateUtil.formatDateTime(new Date()));
         RetValue retValue = new RetValue();

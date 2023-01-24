@@ -19,7 +19,9 @@ public interface CustomerService {
 
     Customer queryCustomerForUpdate(String id);
 
-    int deleteCustomerById(String[] ids);
+    void deleteCustomerById(String[] ids);
 
     Customer queryCustomerForDetailById(String id);
+
+    Customer queryCustomerByName(String name);
 }

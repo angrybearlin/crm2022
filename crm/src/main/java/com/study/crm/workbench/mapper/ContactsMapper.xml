@@ -291,5 +291,100 @@
     select id, fullname, email, mphone
     from tbl_contacts
     where customer_id=#{customerId}
+    order by create_time asc
+  </select>
+
+  <insert id="insertContactOnCustomerDetail" parameterType="com.study.crm.workbench.domain.Contacts">
+    insert into
+        tbl_contacts(id, owner, source, customer_id, fullname, appellation, email, mphone, job, create_by,
+                             create_time, description, contact_summary, next_contact_time, address)
+    values (#{id}, #{owner}, #{source}, #{customerId}, #{fullname}, #{appellation}, #{email}, #{mphone}, #{job},
+            #{createBy}, #{createTime}, #{description}, #{contactSummary}, #{nextContactTime}, #{address})
+  </insert>
+
+  <delete id="deleteContactById" parameterType="string">
+    delete
+    from tbl_contacts
+    where id=#{id};
+  </delete>
+
+  <delete id="deleteContactByCustomerId" parameterType="string">
+    delete from tbl_contacts where customer_id=#{customerId}
+  </delete>
+
+  <select id="selectContactByConditionForPages" parameterType="map" resultMap="BaseResultMap">
+    select con.id, con.fullname, cus.name as customer_id, u.name as owner, dv.value as source
+    from tbl_contacts con
+    left join tbl_customer cus on con.customer_id=cus.id
+    join tbl_user u on con.owner=u.id
+    left join tbl_dic_value dv on con.source=dv.id
+    <where>
+      <if test="owner != null and owner != ''">
+        u.name like "%"#{owner}"%"
+      </if>
+      <if test="fullname != null and fullname != ''">
+        con.fullname like "%"#{fullname}"%"
+      </if>
+      <if test="customerName != null and customerName != ''">
+        cus.name like "%"#{customerName}"%"
+      </if>
+      <if test="source != null and source != ''">
+        dv.id=#{source}
+      </if>
+    </where>
+    order by con.create_time desc
+    limit #{startIndex},#{pageSize}
+  </select>
+
+  <select id="selectCountOfContactByCondition" parameterType="map" resultType="int">
+    select count(*)
+    from tbl_contacts con
+    left join tbl_customer cus on con.customer_id=cus.id
+    join tbl_user u on con.owner=u.id
+    left join tbl_dic_value dv on con.source=dv.id
+    <where>
+      <if test="owner != null and owner != ''">
+        u.name like "%"#{owner}"%"
+      </if>
+      <if test="fullname != null and fullname != ''">
+        con.fullname like "%"#{fullname}"%"
+      </if>
+      <if test="customerName != null and customerName != ''">
+        cus.name like "%"#{customerName}"%"
+      </if>
+      <if test="source != null and source != ''">
+        dv.id=#{source}
+      </if>
+    </where>
+  </select>
+
+  <update id="updateContact" parameterType="com.study.crm.workbench.domain.Contacts">
+    update tbl_contacts
+    set owner=#{owner}, source=#{source}, customer_id=#{customerId}, fullname=#{fullname}, appellation=#{appellation},
+        email=#{email}, mphone=#{mphone}, job=#{job}, edit_by=#{editBy}, edit_time=#{editTime}, description=#{description},
+        contact_summary=#{contactSummary}, next_contact_time=#{nextContactTime}, address=#{address}
+    where id=#{id}
+  </update>
+
+  <select id="selectContactById" parameterType="string" resultMap="BaseResultMap">
+    select con.id, con.owner, con.source, cus.name as customer_id, con.fullname, con.appellation, con.email, con.mphone,
+           con.job, con.description, con.contact_summary, con.next_contact_time, con.address
+    from tbl_contacts con
+    left join tbl_customer cus on con.customer_id=cus.id
+    where con.id=#{id}
+  </select>
+
+  <select id="selectContactByIdForDetail" parameterType="string" resultMap="BaseResultMap">
+    select con.id, u1.name as owner, dv1.value as source, cus.name as customer_id, con.fullname, dv2.value as appellation,
+           con.email, con.mphone, con.job, con.description, con.contact_summary, con.next_contact_time, con.address,
+           u2.name as create_by, con.create_time, u3.name as edit_by, con.edit_time
+    from tbl_contacts con
+    join tbl_user u1 on con.owner=u1.id
+    left join tbl_dic_value dv1 on con.source=dv1.id
+    left join tbl_customer cus on con.customer_id=cus.id
+    left join tbl_dic_value dv2 on con.appellation=dv2.id
+    join tbl_user u2 on con.create_by=u2.id
+    left join tbl_user u3 on con.edit_by=u3.id
+    where con.id=#{id}
   </select>
 </mapper>

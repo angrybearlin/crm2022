@@ -174,4 +174,35 @@
       #{obj.editFlag}, #{obj.contactsId})
     </foreach>
   </insert>
+
+  <select id="selectContactRemarkByContactId" parameterType="string" resultMap="BaseResultMap">
+    select cr.id, cr.note_content, u1.name as create_by, cr.create_time, u2.name as edit_by, cr.edit_time, cr.edit_flag
+    from tbl_contacts_remark cr
+    join tbl_user u1 on cr.create_by=u1.id
+    left join tbl_user u2 on cr.edit_by=u2.id
+    where cr.contacts_id=#{contactId}
+    order by cr.create_time asc
+  </select>
+
+  <insert id="insertContactRemark" parameterType="com.study.crm.workbench.domain.ContactsRemark">
+    insert into tbl_contacts_remark(id, note_content, create_by, create_time, edit_flag, contacts_id)
+    values (#{id}, #{noteContent}, #{createBy}, #{createTime}, #{editFlag}, #{contactsId})
+  </insert>
+
+  <update id="updateContactRemark" parameterType="com.study.crm.workbench.domain.ContactsRemark">
+    update tbl_contacts_remark set note_content=#{noteContent}, edit_by=#{editBy}, edit_time=#{editTime}, edit_flag=#{editFlag}
+    where id=#{id}
+  </update>
+
+  <delete id="deleteContactRemarkById" parameterType="string">
+    delete
+    from tbl_contacts_remark
+    where id=#{id};
+  </delete>
+
+  <delete id="deleteContactRemarkByContactsId" parameterType="string">
+    delete
+    from tbl_contacts_remark
+    where contacts_id=#{contactsId};
+  </delete>
 </mapper>

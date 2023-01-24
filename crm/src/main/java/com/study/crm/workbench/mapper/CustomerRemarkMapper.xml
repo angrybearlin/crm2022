@@ -199,4 +199,8 @@
   <delete id="deleteCustomerRemarkById" parameterType="string">
     delete from tbl_customer_remark where id=#{id}
   </delete>
+
+  <delete id="deleteCustomerRemarkByCustomerId" parameterType="string">
+    delete from tbl_customer_remark where customer_id=#{customerId}
+  </delete>
 </mapper>

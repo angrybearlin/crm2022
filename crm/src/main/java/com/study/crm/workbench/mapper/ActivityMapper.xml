@@ -356,4 +356,21 @@
     join tbl_user u on a.owner=u.id
     where a.name like "%"#{activityName}"%"
   </select>
+
+  <select id="selectActivityByContactId" parameterType="string" resultMap="BaseResultMap">
+    select a.id, a.start_date, a.end_date, u.name as owner, a.name
+    from tbl_activity a
+    join tbl_user u on a.owner=u.id
+    join tbl_contacts_activity_relation car on a.id=car.activity_id
+    where car.contacts_id=#{contactId}
+  </select>
+
+  <select id="selectActivityByNameExcludeContactsId" parameterType="map" resultMap="BaseResultMap">
+    select a.id, u.name as owner, a.name, a.start_date, a.end_date
+    from tbl_activity a
+    join tbl_user u on a.owner=u.id
+    where a.name like "%"#{activityName}"%" and a.id not in (
+        select activity_id from tbl_contacts_activity_relation where contacts_id=#{contactsId}
+    )
+  </select>
 </mapper>

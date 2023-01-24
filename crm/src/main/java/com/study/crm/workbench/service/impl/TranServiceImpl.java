@@ -120,4 +120,39 @@ public class TranServiceImpl implements TranService {
         }
         return tranList;
     }
+
+    @Override
+    public int deleteTranById(String id) {
+        return tranMapper.deleteTranById(id);
+    }
+
+    @Override
+    public List<Tran> queryTranByContactId(String contactId) {
+        ResourceBundle bundle = ResourceBundle.getBundle("possibility");
+        List<Tran> tranList = tranMapper.selectTranByContactId(contactId);
+        for (Tran tran: tranList) {
+            String possibility = bundle.getString(tran.getStage());
+            tran.setPossibility(possibility);
+        }
+        return tranList;
+    }
+
+    @Override
+    public int updateTranById(Tran tran, TranHistory tranHistory) {
+        int count = tranMapper.updateTranById(tran);
+        count += tranHistoryMapper.insertTranHistory(tranHistory);
+        return count;
+    }
+
+    @Override
+    public Map<String, Object> queryTranForUpdateById(String id) {
+        return tranMapper.selectTranForUpdateById(id);
+    }
+
+    @Override
+    public String queryStageIdOfTran(String id) {
+        return tranMapper.selectStageIdOfTran(id);
+    }
+
 }
+

@@ -29,6 +29,26 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":" + 
 			$("#findMarketActivity").modal("show");
 		});
 
+		$("#create-expectedDate").datetimepicker({
+			language:'zh-CN', // 语言
+			format: 'yyyy-mm-dd', // 日期的格式
+			minView: 'month', // 可以选择的最小视图
+			initData: new Date(), // 初始化显示的日期
+			autoclose: true, // 选择完日期后是否自动关闭日历
+			todayBtn:true, // 设置是否显示"今天"按钮，默认是false
+			clearBtn: true // 设置是否显示"清空"按钮，默认是false
+		});
+
+		$("#create-nextContactTime").datetimepicker({
+			language:'zh-CN', // 语言
+			format: 'yyyy-mm-dd', // 日期的格式
+			minView: 'month', // 可以选择的最小视图
+			initData: new Date(), // 初始化显示的日期
+			autoclose: true, // 选择完日期后是否自动关闭日历
+			todayBtn:true, // 设置是否显示"今天"按钮，默认是false
+			clearBtn: true // 设置是否显示"清空"按钮，默认是false
+		});
+
 		// 给市场活动搜索框添加键盘弹起事件
 		$("#searchActivityTxt").keyup(function () {
 			var activityName = this.value;
@@ -66,6 +86,7 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":" + 
 			$("#findMarketActivity").modal("hide");
 		});
 
+		// 给搜索联系人按钮添加单击事件
 		$("#searchContactsBtn").click(function () {
 			// 初始化工作
 			// 清空搜索框
@@ -365,7 +386,7 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":" + 
 		<div class="form-group">
 			<label for="create-customerName" class="col-sm-2 control-label">客户名称<span style="font-size: 15px; color: red;">*</span></label>
 			<div class="col-sm-10" style="width: 300px;">
-				<input type="text" class="form-control" id="create-customerName" placeholder="支持自动补全，输入客户不存在则新建">
+				<input type="text" class="form-control" value="${customerName}" id="create-customerName" placeholder="支持自动补全，输入客户不存在则新建">
 			</div>
 			<label for="create-stage" class="col-sm-2 control-label">阶段<span style="font-size: 15px; color: red;">*</span></label>
 			<div class="col-sm-10" style="width: 300px;">
@@ -414,8 +435,8 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":" + 
 		<div class="form-group">
 			<label for="contactsName" class="col-sm-2 control-label">联系人名称&nbsp;&nbsp;<a href="javascript:void(0);" id="searchContactsBtn"><span class="glyphicon glyphicon-search"></span></a></label>
 			<div class="col-sm-10" style="width: 300px;">
-				<input type="hidden" id="create-contactsId">
-				<input type="text" class="form-control" id="contactsName" readonly>
+				<input type="hidden" id="create-contactsId" value="${contactId}">
+				<input type="text" class="form-control" id="contactsName" value="${contactName}" readonly>
 			</div>
 		</div>
 

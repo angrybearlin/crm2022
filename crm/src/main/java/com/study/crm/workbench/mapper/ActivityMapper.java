@@ -149,4 +149,18 @@ public interface ActivityMapper {
      * @return
      */
     List<Activity> selectActivityByName(String activityName);
+
+    /**
+     * 根据contactId查询和该联系人关联的市场活动
+     * @param contactId
+     * @return
+     */
+    List<Activity> selectActivityByContactId(String contactId);
+
+    /**
+     * 根据名字查询市场活动并排除已和指定联系人关联的市场活动
+     * @param map
+     * @return
+     */
+    List<Activity> selectActivityByNameExcludeContactsId(Map<String, Object> map);
 }
