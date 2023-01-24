@@ -95,4 +95,53 @@ public interface TranMapper {
      * @return
      */
     List<Tran> selectTranByCustomerId(String customerId);
+
+    /**
+     * 根据id删除交易
+     * @param id
+     * @return
+     */
+    int deleteTranById(String id);
+
+    /**
+     * 根据customerId删除该客户的所有交易
+     * @param customerId
+     * @return
+     */
+    int deleteTranByCustomerId(String customerId);
+
+    /**
+     * 根据contactId查询该联系人下的所有交易
+     * @param contactId
+     * @return
+     */
+    List<Tran> selectTranByContactId(String contactId);
+
+    /**
+     * 根据contactsId删除该联系人下所有交易
+     * @param contactsId
+     * @return
+     */
+    int deleteTranByContactsId(String contactsId);
+
+    /**
+     * 根据id查询交易信息展示在修改页面
+     * @param id
+     * @return
+     */
+    Map<String, Object> selectTranForUpdateById(String id);
+
+    /**
+     * 根据id修改交易
+     * @param tran
+     * @return
+     */
+    int updateTranById(Tran tran);
+
+    /**
+     * 查询某一交易的阶段id
+     * @param id
+     * @return
+     */
+    String selectStageIdOfTran(String id);
 }

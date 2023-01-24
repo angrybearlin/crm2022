@@ -3,6 +3,7 @@ package com.study.crm.workbench.mapper;
 import com.study.crm.workbench.domain.Contacts;
 
 import java.util.List;
+import java.util.Map;
 
 public interface ContactsMapper {
     /**
@@ -67,5 +68,66 @@ public interface ContactsMapper {
      */
     List<Contacts> selectContactsByName(String contactsName);
 
+    /**
+     * 通过客户Id查询联系人
+     * @param customerId
+     * @return
+     */
     List<Contacts> selectContactsByCustomerId(String customerId);
+
+    /**
+     * 在客户详情页新增联系人
+     * @param contacts
+     * @return
+     */
+    int insertContactOnCustomerDetail(Contacts contacts);
+
+    /**
+     * 根据id删除联系人
+     * @param id
+     * @return
+     */
+    int deleteContactById(String id);
+
+    /**
+     * 根据customerId删除该客户下的所有联系人
+     * @param customerId
+     * @return
+     */
+    int deleteContactByCustomerId(String customerId);
+
+    /**
+     * 按条件查询联系人并分页
+     * @param map
+     * @return
+     */
+    List<Contacts> selectContactByConditionForPages(Map<String, Object> map);
+
+    /**
+     * 统计条件查询后联系人的数量
+     * @param map
+     * @return
+     */
+    int selectCountOfContactByCondition(Map<String, Object> map);
+
+    /**
+     * 修改客户
+     * @param contacts
+     * @return
+     */
+    int updateContact(Contacts contacts);
+
+    /**
+     * 通过id查询联系人信息
+     * @param id
+     * @return
+     */
+    Contacts selectContactById(String id);
+
+    /**
+     * 根据id查询联系人信息，展示在详情页
+     * @param id
+     * @return
+     */
+    Contacts selectContactByIdForDetail(String id);
 }

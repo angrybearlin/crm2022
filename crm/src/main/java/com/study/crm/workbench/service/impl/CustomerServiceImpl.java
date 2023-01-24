@@ -1,8 +1,14 @@
 package com.study.crm.workbench.service.impl;
 
 import com.study.crm.workbench.domain.Customer;
+import com.study.crm.workbench.mapper.ContactsMapper;
 import com.study.crm.workbench.mapper.CustomerMapper;
+import com.study.crm.workbench.mapper.CustomerRemarkMapper;
+import com.study.crm.workbench.mapper.TranMapper;
+import com.study.crm.workbench.service.ContactsService;
+import com.study.crm.workbench.service.CustomerRemarkService;
 import com.study.crm.workbench.service.CustomerService;
+import com.study.crm.workbench.service.TranService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -13,6 +19,15 @@ import java.util.Map;
 public class CustomerServiceImpl implements CustomerService {
     @Autowired
     private CustomerMapper customerMapper;
+
+    @Autowired
+    private CustomerRemarkMapper customerRemarkMapper;
+
+    @Autowired
+    private TranMapper tranMapper;
+
+    @Autowired
+    private ContactsMapper contactsMapper;
 
     @Override
     public List<Customer> queryCustomerNameByName(String customerName) {
@@ -54,12 +69,22 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
     @Override
-    public int deleteCustomerById(String[] ids) {
-        return customerMapper.deleteCustomerById(ids);
+    public void deleteCustomerById(String[] ids) {
+        customerMapper.deleteCustomerById(ids);
+        for (String id: ids) {
+            customerRemarkMapper.deleteCustomerRemarkByCustomerId(id);
+            tranMapper.deleteTranByCustomerId(id);
+            contactsMapper.deleteContactByCustomerId(id);
+        }
     }
 
     @Override
     public Customer queryCustomerForDetailById(String id) {
         return customerMapper.selectCustomerForDetailById(id);
+    }
+
+    @Override
+    public Customer queryCustomerByName(String name) {
+        return customerMapper.selectCustomerByName(name);
     }
 }

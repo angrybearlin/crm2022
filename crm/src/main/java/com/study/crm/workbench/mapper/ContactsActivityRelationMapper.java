@@ -53,5 +53,24 @@ public interface ContactsActivityRelationMapper {
      */
     int updateByPrimaryKey(ContactsActivityRelation record);
 
+    /**
+     * 通过列表新增联系人市场活动关联关系
+     * @param conActRelationList
+     * @return
+     */
     int insertConActRelationByList(List<ContactsActivityRelation> conActRelationList);
+
+    /**
+     * 通过activityId删除联系人市场活动备注
+     * @param relation
+     * @return
+     */
+    int deleteConActRelationByActivityId(ContactsActivityRelation relation);
+
+    /**
+     * 根据contactsId删除和该联系人所有关联市场活动的关联关系
+     * @param contactsId
+     * @return
+     */
+    int deleteConActRelationByContactsId(String contactsId);
 }

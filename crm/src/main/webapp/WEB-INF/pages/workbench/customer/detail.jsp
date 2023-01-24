@@ -9,8 +9,15 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":" + 
 <meta charset="UTF-8">
 
 <link href="jquery/bootstrap_3.3.0/css/bootstrap.min.css" type="text/css" rel="stylesheet" />
+<link rel="stylesheet" href="jquery/bootstrap-datetimepicker-master/css/bootstrap-datetimepicker.min.css">
+<link rel="stylesheet" type="text/css" href="jquery/bs_pagination-master/css/jquery.bs_pagination.min.css">
+
 <script type="text/javascript" src="jquery/jquery-1.11.1-min.js"></script>
 <script type="text/javascript" src="jquery/bootstrap_3.3.0/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="jquery/bootstrap-datetimepicker-master/js/bootstrap-datetimepicker.js"></script>
+<script type="text/javascript" src="jquery/bootstrap-datetimepicker-master/locale/bootstrap-datetimepicker.zh-CN.js"></script>
+<script type="text/javascript" src="jquery/bs_pagination-master/js/jquery.bs_pagination.min.js"></script>
+<script type="text/javascript" src="jquery/bs_pagination-master/localization/en.js"></script>
 
 <script type="text/javascript">
 
@@ -34,6 +41,16 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":" + 
 			//设置remarkDiv的高度为130px
 			$("#remarkDiv").css("height","90px");
 			cancelAndSaveBtnDefault = true;
+		});
+
+		$("#create-nextContactTime").datetimepicker({
+			language:'zh-CN', // 语言
+			format: 'yyyy-mm-dd', // 日期的格式
+			minView: 'month', // 可以选择的最小视图
+			initData: new Date(), // 初始化显示的日期
+			autoclose: true, // 选择完日期后是否自动关闭日历
+			todayBtn:true, // 设置是否显示"今天"按钮，默认是false
+			clearBtn: true // 设置是否显示"清空"按钮，默认是false
 		});
 
 		$("#remarkDivList").on("mouseover", ".remarkDiv", function () {
@@ -76,7 +93,7 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":" + 
 						// 刷新备注列表
 						var htmlStr="";
 						htmlStr += "<div class=\"remarkDiv\" id=\"div_"+data.data.id+"\" style=\"height: 60px;\">";
-						htmlStr += "	<img title=\""+data.data.createBy+"\" src=\"image/user-thumbnail.png\" style=\"width: 30px; height:30px;\">";
+						htmlStr += "	<img title=\"${sessionScope.sessionUser.name}\" src=\"image/user-thumbnail.png\" style=\"width: 30px; height:30px;\">";
 						htmlStr += "		<div style=\"position: relative; top: -40px; left: 40px;\" >";
 						htmlStr += "			<h5>"+data.data.noteContent+"</h5>";
 						htmlStr += "			<font color=\"gray\">客户</font> <font color=\"gray\">-</font> <b>${customer.name}</b> <small style=\"color: gray;\"> "+data.data.createTime+" 由${sessionScope.sessionUser.name}创建</small>";
@@ -95,7 +112,7 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":" + 
 			})
 		});
 
-		// 给所有线索备注的修改图标添加单击事件
+		// 给所有备注的修改图标添加单击事件
 		$("#remarkDivList").on("click", "a[name='editA']", function () {
 			// 获取备注的id和noteContent
 			var id = $(this).attr("remarkId");
@@ -140,7 +157,7 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":" + 
 			})
 		});
 
-		// 给所有删除图标添加单击事件
+		// 给所有删除备注图标添加单击事件
 		$("#remarkDivList").on("click", "a[name='deleteA']", function () {
 			// 收集参数
 			var id = $(this).attr("remarkId");
@@ -161,6 +178,127 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":" + 
 					}
 				}
 			})
+		});
+
+		// 给所有删除交易按钮添加单击事件
+		$("#tranTBody").on("click", "a[name='deleteA']", function () {
+			// 收集参数
+			var tranId = $(this).attr("tranId");
+			if (window.confirm("确定删除吗?")) {
+				$.ajax({
+					url: 'workbench/transaction/deleteTranById.do',
+					data: {
+						id: tranId
+					},
+					type: 'post',
+					dataType: 'json',
+					success: function (data) {
+						if (data.code == '0') {
+							$("#tr_"+tranId).remove();
+						} else {
+							alert(data.msg);
+						}
+					}
+				});
+			}
+		});
+
+		// 给新建联系人按钮添加单击事件
+		$("#createContactBtn").click(function () {
+			$("#createContactForm")[0].reset();
+			$("#createContactsModal").modal("show");
+		});
+
+		// 给保存新建联系人按钮添加单击事件
+		$("#saveCreateContactBtn").click(function () {
+			var owner             = $("#create-owner            ").val();
+			var source            = $("#create-source           ").val();
+			var customerId        = '${customer.id}';
+			var fullname          = $.trim($("#create-fullname         ").val());
+			var appellation       = $("#create-appellation      ").val();
+			var email             = $.trim($("#create-email            ").val());
+			var mphone            = $.trim($("#create-mphone           ").val());
+			var job               = $.trim($("#create-job              ").val());
+			var description       = $.trim($("#create-description      ").val());
+			var contactSummary    = $.trim($("#create-contactSummary   ").val());
+			var nextContactTime   = $("#create-nextContactTime  ").val();
+			var address           = $.trim($("#create-address          ").val());
+
+			if (fullname ==  null) {
+				alert("姓名不能为空");
+				return;
+			}
+			var mphoneRegExp = /^(13[0-9]|14[5|7]|15[0|1|2|3|5|6|7|8|9]|18[0|1|2|3|5|6|7|8|9])\d{8}$/;
+			if (!mphoneRegExp.test(mphone)) {
+				alert("手机号填写格式不规范");
+				return;
+			}
+			var emailRegExp = /^\w+([-+.]\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$/;
+			if (!emailRegExp.test(email)) {
+				alert("邮箱填写格式不规范");
+				return;
+			}
+
+			$.ajax({
+				url: 'workbench/customer/insertContactOnCustomerDetail.do',
+				data: {
+					owner          : owner          ,
+					source         : source         ,
+					customerId     : customerId     ,
+					fullname       : fullname       ,
+					appellation    : appellation    ,
+					email          : email          ,
+					mphone         : mphone         ,
+					job            : job            ,
+					description    : description    ,
+					contactSummary : contactSummary ,
+					nextContactTime: nextContactTime,
+					address        : address
+				},
+				type: 'post',
+				dataType: 'json',
+				success: function (data) {
+					if (data.code == '0') {
+						$("#createContactsModal").modal("hide");
+						var htmlStr="";
+						htmlStr += "<tr id='tr_"+data.data.id+"'>";
+						htmlStr += "    <td><a href=\"workbench/contacts/detail.do?id="+data.data.id+"\" style=\"text-decoration: none;\">"+data.data.fullname+"</a></td>";
+						htmlStr += "    <td>"+data.data.email+"</td>";
+						htmlStr += "    <td>"+data.data.mphone+"</td>";
+						htmlStr += "    <td><a href=\"javascript:void(0);\" name='deleteA' contactId=\""+data.data.id+"\" style=\"text-decoration: none;\"><span class=\"glyphicon glyphicon-remove\"></span>删除</a></td>";
+						htmlStr += "</tr>";
+						$("#contactTBody").append(htmlStr);
+					} else {
+						alert(data.msg);
+						$("#createContactsModal").modal("show");
+					}
+				}
+			})
+		});
+
+		// 给删除联系人按钮添加单击事件
+		$("#contactTBody").on("click", "a[name='deleteA']", function () {
+			// 收集参数
+			var contactId = $(this).attr("contactId");
+			// 向后台发送请求
+			if (window.confirm("确定删除吗?")) {
+				$.ajax({
+					url: 'workbench/customer/deleteContactOnCustomerDetail.do',
+					data: {
+						contactId: contactId
+					},
+					type: 'post',
+					dataType: 'json',
+					success: function (data) {
+						if (data.code == '0') {
+							// 刷新备注列表
+							$("#tr_"+contactId).remove();
+						} else {
+							alert(data.msg);
+						}
+					}
+				})
+			}
 		});
 	});
 
@@ -253,53 +391,40 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":" + 
 					<h4 class="modal-title" id="myModalLabel1">创建联系人</h4>
 				</div>
 				<div class="modal-body">
-					<form class="form-horizontal" role="form">
+					<form class="form-horizontal" role="form" id="createContactForm">
 
 						<div class="form-group">
-							<label for="create-contactsOwner" class="col-sm-2 control-label">所有者<span style="font-size: 15px; color: red;">*</span></label>
+							<label for="create-owner" class="col-sm-2 control-label">所有者<span style="font-size: 15px; color: red;">*</span></label>
 							<div class="col-sm-10" style="width: 300px;">
-								<select class="form-control" id="create-contactsOwner">
-								  <option>zhangsan</option>
-								  <option>lisi</option>
-								  <option>wangwu</option>
+								<select class="form-control" id="create-owner">
+									<c:forEach items="${userList}" var="user">
+										<option value="${user.id}">${user.name}</option>
+									</c:forEach>
 								</select>
 							</div>
-							<label for="create-clueSource" class="col-sm-2 control-label">来源</label>
+							<label for="create-source" class="col-sm-2 control-label">来源</label>
 							<div class="col-sm-10" style="width: 300px;">
-								<select class="form-control" id="create-clueSource">
+								<select class="form-control" id="create-source">
 								  <option></option>
-								  <option>广告</option>
-								  <option>推销电话</option>
-								  <option>员工介绍</option>
-								  <option>外部介绍</option>
-								  <option>在线商场</option>
-								  <option>合作伙伴</option>
-								  <option>公开媒介</option>
-								  <option>销售邮件</option>
-								  <option>合作伙伴研讨会</option>
-								  <option>内部研讨会</option>
-								  <option>交易会</option>
-								  <option>web下载</option>
-								  <option>web调研</option>
-								  <option>聊天</option>
+								  <c:forEach items="${sourceList}" var="source">
+									  <option value="${source.id}">${source.value}</option>
+								  </c:forEach>
 								</select>
 							</div>
 						</div>
 
 						<div class="form-group">
-							<label for="create-surname" class="col-sm-2 control-label">姓名<span style="font-size: 15px; color: red;">*</span></label>
+							<label for="create-fullname" class="col-sm-2 control-label">姓名<span style="font-size: 15px; color: red;">*</span></label>
 							<div class="col-sm-10" style="width: 300px;">
-								<input type="text" class="form-control" id="create-surname">
+								<input type="text" class="form-control" id="create-fullname">
 							</div>
-							<label for="create-call" class="col-sm-2 control-label">称呼</label>
+							<label for="create-appellation" class="col-sm-2 control-label">称呼</label>
 							<div class="col-sm-10" style="width: 300px;">
-								<select class="form-control" id="create-call">
+								<select class="form-control" id="create-appellation">
 								  <option></option>
-								  <option>先生</option>
-								  <option>夫人</option>
-								  <option>女士</option>
-								  <option>博士</option>
-								  <option>教授</option>
+									<c:forEach items="${appellationList}" var="app">
+										<option value="${app.id}">${app.value}</option>
+									</c:forEach>
 								</select>
 							</div>
 
@@ -321,23 +446,17 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":" + 
 							<div class="col-sm-10" style="width: 300px;">
 								<input type="text" class="form-control" id="create-email">
 							</div>
-							<label for="create-birth" class="col-sm-2 control-label">生日</label>
-							<div class="col-sm-10" style="width: 300px;">
-								<input type="text" class="form-control" id="create-birth">
-							</div>
-						</div>
-
-						<div class="form-group" style="position: relative;">
 							<label for="create-customerName" class="col-sm-2 control-label">客户名称</label>
 							<div class="col-sm-10" style="width: 300px;">
-								<input type="text" class="form-control" id="create-customerName" placeholder="支持自动补全，输入客户不存在则新建">
+								<%--<input type="hidden" id="create-customerId" value="${customer.id}">--%>
+								<input type="text" class="form-control" id="create-customerName" value="${customer.name}" readonly>
 							</div>
 						</div>
 
 						<div class="form-group" style="position: relative;">
-							<label for="create-describe" class="col-sm-2 control-label">描述</label>
+							<label for="create-description" class="col-sm-2 control-label">描述</label>
 							<div class="col-sm-10" style="width: 81%;">
-								<textarea class="form-control" rows="3" id="create-describe"></textarea>
+								<textarea class="form-control" rows="3" id="create-description"></textarea>
 							</div>
 						</div>
 
@@ -345,15 +464,15 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":" + 
 
                         <div style="position: relative;top: 15px;">
                             <div class="form-group">
-                                <label for="edit-contactSummary" class="col-sm-2 control-label">联系纪要</label>
+                                <label for="create-contactSummary" class="col-sm-2 control-label">联系纪要</label>
                                 <div class="col-sm-10" style="width: 81%;">
-                                    <textarea class="form-control" rows="3" id="edit-contactSummary">这个线索即将被转换</textarea>
+                                    <textarea class="form-control" rows="3" id="create-contactSummary"></textarea>
                                 </div>
                             </div>
                             <div class="form-group">
-                                <label for="edit-nextContactTime" class="col-sm-2 control-label">下次联系时间</label>
+                                <label for="create-nextContactTime" class="col-sm-2 control-label">下次联系时间</label>
                                 <div class="col-sm-10" style="width: 300px;">
-                                    <input type="text" class="form-control" id="edit-nextContactTime" value="2017-05-01">
+                                    <input type="text" class="form-control" id="create-nextContactTime">
                                 </div>
                             </div>
                         </div>
@@ -362,9 +481,9 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":" + 
 
                         <div style="position: relative;top: 20px;">
                             <div class="form-group">
-                                <label for="edit-address1" class="col-sm-2 control-label">详细地址</label>
+                                <label for="create-address" class="col-sm-2 control-label">详细地址</label>
                                 <div class="col-sm-10" style="width: 81%;">
-                                    <textarea class="form-control" rows="1" id="edit-address1">北京大兴区大族企业湾</textarea>
+                                    <textarea class="form-control" rows="1" id="create-address"></textarea>
                                 </div>
                             </div>
                         </div>
@@ -373,7 +492,7 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":" + 
 				</div>
 				<div class="modal-footer">
 					<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
-					<button type="button" class="btn btn-primary" data-dismiss="modal">保存</button>
+					<button type="button" class="btn btn-primary" id="saveCreateContactBtn">保存</button>
 				</div>
 			</div>
 		</div>
@@ -541,16 +660,16 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":" + 
 							<td></td>
 						</tr>
 					</thead>
-					<tbody>
+					<tbody id="tranTBody">
 						<c:forEach items="${tranList}" var="tran">
 							<tr id="tr_${tran.id}">
-								<td><a href="workbench/transaction/toTranDetail.do?tranId="+${tran.id} style="text-decoration: none;">${tran.name}</a></td>
+								<td><a href="workbench/transaction/toTranDetail.do?tranId=${tran.id}" style="text-decoration: none;">${tran.name}</a></td>
 								<td>${tran.money}</td>
 								<td>${tran.stage}</td>
-								<td>${tran.possibility}</td>
+								<td>${tran.possibility}%</td>
 								<td>${tran.expectedDate}</td>
 								<td>${tran.type}</td>
-								<td><a href="javascript:void(0);" id="deleteTranBtn" style="text-decoration: none;"><span class="glyphicon glyphicon-remove"></span>删除</a></td>
+								<td><a href="javascript:void(0);" name="deleteA" id="deleteTranBtn" tranId="${tran.id}" style="text-decoration: none;"><span class="glyphicon glyphicon-remove"></span>删除</a></td>
 							</tr>
 						</c:forEach>
 						<%--<tr>
@@ -567,7 +686,7 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":" + 
 			</div>
 
 			<div>
-				<a href="../transaction/save.jsp" style="text-decoration: none;"><span class="glyphicon glyphicon-plus"></span>新建交易</a>
+				<a href="workbench/customer/toSaveTran.do?customerName=${customer.name}" style="text-decoration: none;"><span class="glyphicon glyphicon-plus"></span>新建交易</a>
 			</div>
 		</div>
 	</div>
@@ -588,17 +707,17 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":" + 
 							<td></td>
 						</tr>
 					</thead>
-					<tbody>
+					<tbody id="contactTBody">
 						<c:forEach items="${contactsList}" var="contact">
 							<tr id="tr_${contact.id}">
-								<td><a href="../contacts/detail.html" style="text-decoration: none;">${contact.fullname}</a></td>
+								<td><a href="workbench/contacts/detail.do?id=${contact.id}" style="text-decoration: none;">${contact.fullname}</a></td>
 								<td>${contact.email}</td>
 								<td>${contact.mphone}</td>
-								<td><a href="javascript:void(0);" id="deleteContactBtn" style="text-decoration: none;"><span class="glyphicon glyphicon-remove"></span>删除</a></td>
+								<td><a href="javascript:void(0);" name="deleteA" contactId="${contact.id}" style="text-decoration: none;"><span class="glyphicon glyphicon-remove"></span>删除</a></td>
 							</tr>
 						</c:forEach>
 						<%--<tr>
-							<td><a href="../contacts/detail.html" style="text-decoration: none;">李四</a></td>
+							<td><a href="../contacts/detail.jsp" style="text-decoration: none;">李四</a></td>
 							<td>lisi@bjpowernode.com</td>
 							<td>13543645364</td>
 							<td><a href="javascript:void(0);" data-toggle="modal" data-target="#removeContactsModal" style="text-decoration: none;"><span class="glyphicon glyphicon-remove"></span>删除</a></td>
@@ -608,7 +727,7 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":" + 
 			</div>
 
 			<div>
-				<a href="javascript:void(0);" data-toggle="modal" data-target="#createContactsModal" style="text-decoration: none;"><span class="glyphicon glyphicon-plus"></span>新建联系人</a>
+				<a href="javascript:void(0);" id="createContactBtn" style="text-decoration: none;"><span class="glyphicon glyphicon-plus"></span>新建联系人</a>
 			</div>
 		</div>
 	</div>

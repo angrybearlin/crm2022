@@ -116,4 +116,16 @@
     (#{obj.id}, #{obj.contactsId}, #{obj.activityId})
     </foreach>
   </insert>
+
+  <delete id="deleteConActRelationByActivityId" parameterType="com.study.crm.workbench.domain.ContactsActivityRelation">
+    delete
+    from tbl_contacts_activity_relation
+    where activity_id=#{activityId} and contacts_id=#{contactsId};
+  </delete>
+
+  <delete id="deleteConActRelationByContactsId" parameterType="string">
+    delete
+    from tbl_contacts_activity_relation
+    where contacts_id=#{contactsId};
+  </delete>
 </mapper>

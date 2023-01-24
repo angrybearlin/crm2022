@@ -31,6 +31,21 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":" + 
 		// 给查询按钮添加单击事件
 		$("#queryTranBtn").click(function () {
 			queryTranByConditionForPage(1, $("#mydiv").bs_pagination('getOption', 'rowsPerPage'));
+		});
+
+		// 给编辑按钮添加单击事件
+		$("#editTranBtn").click(function () {
+			var checkIds = $("#tBody input[type='checkbox']:checked");
+			if (checkIds.size() == 0) {
+				alert("请选择要修改的交易");
+				return;
+			}
+			if (checkIds.size() > 1 ){
+				alert("每次只能修改一条交易");
+				return;
+			}
+			var id = checkIds[0].value;
+			window.location.href = "workbench/transaction/toEdit.do?id="+id;
 		})
 	});
 
@@ -67,7 +82,7 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":" + 
 				var htmlStr = "";
 				$.each(data.tranList, function (index, obj) {
 					htmlStr += "<tr>";
-					htmlStr += "	<td><input type=\"checkbox\" /></td>";
+					htmlStr += "	<td><input type=\"checkbox\" value='"+obj.id+"'/></td>";
 					htmlStr += "	<td><a style=\"text-decoration: none; cursor: pointer;\" onclick=\"window.location.href='workbench/transaction/toTranDetail.do?tranId="+obj.id+"';\">"+obj.name+"</a></td>";
 					htmlStr += "	<td>"+obj.customerName+"</td>";
 					htmlStr += "	<td>"+obj.stage+"</td>";
@@ -206,7 +221,7 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":" + 
 			<div class="btn-toolbar" role="toolbar" style="background-color: #F7F7F7; height: 50px; position: relative;top: 10px;">
 				<div class="btn-group" style="position: relative; top: 18%;">
 				  <button type="button" class="btn btn-primary" id="createTranBtn"><span class="glyphicon glyphicon-plus"></span> 创建</button>
-				  <button type="button" class="btn btn-default" onclick="window.location.href='edit.html';"><span class="glyphicon glyphicon-pencil"></span> 修改</button>
+				  <button type="button" class="btn btn-default" id="editTranBtn"><span class="glyphicon glyphicon-pencil"></span> 修改</button>
 				  <button type="button" class="btn btn-danger"><span class="glyphicon glyphicon-minus"></span> 删除</button>
 				</div>
 

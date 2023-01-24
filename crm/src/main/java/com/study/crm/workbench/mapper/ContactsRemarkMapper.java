@@ -59,4 +59,39 @@ public interface ContactsRemarkMapper {
      * @return
      */
     int insertContactsRemarkByClueRemarkList(List<ContactsRemark> remarkList);
+
+    /**
+     * 根据contactId查询该联系人下所有备注
+     * @param contactId
+     * @return
+     */
+    List<ContactsRemark> selectContactRemarkByContactId(String contactId);
+
+    /**
+     * 新增联系人备注
+     * @param contactsRemark
+     * @return
+     */
+    int insertContactRemark(ContactsRemark contactsRemark);
+
+    /**
+     * 修改联系人备注
+     * @param contactsRemark
+     * @return
+     */
+    int updateContactRemark(ContactsRemark contactsRemark);
+
+    /**
+     * 通过id删除联系人备注
+     * @param id
+     * @return
+     */
+    int deleteContactRemarkById(String id);
+
+    /**
+     * 根据contactsId删除该联系人下所有的备注
+     * @param contactsId
+     * @return
+     */
+    int deleteContactRemarkByContactsId(String contactsId);
 }

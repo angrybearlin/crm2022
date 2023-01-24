@@ -10,6 +10,6 @@ public class Contants {
     public static final String SESSION_USER = "sessionUser";
 
     // 市场活动备注是否编辑过的标记
-    public static final String ACTIVITY_REMARK_HAS_NOT_EDIT = "0"; // 0表示没有被编辑过
-    public static final String ACTIVITY_REMARK_HAS_EDITED = "1"; // 1表示被编辑过
+    public static final String REMARK_HAS_NOT_EDIT = "0"; // 0表示没有被编辑过
+    public static final String REMARK_HAS_EDITED = "1"; // 1表示被编辑过
 }
