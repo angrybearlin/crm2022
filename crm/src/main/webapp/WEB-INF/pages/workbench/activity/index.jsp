@@ -241,7 +241,7 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":" + 
 					$("#edit-marketActivityOwner").val(data.owner)
 					$("#edit-marketActivityName").val(data.name)
 					$("#edit-startTime").val(data.startDate)
-					$("#edit-endtTime").val(data.endDate)
+					$("#edit-endTime").val(data.endDate)
 					$("#edit-cost").val(data.cost)
 					$("#edit-description").val(data.description)
 					// 弹出模态窗口
